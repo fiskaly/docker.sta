@@ -28,5 +28,4 @@
 default: build
 
 build:
-#	docker build -t $(TARGET):`git describe --tags --always --dirty` .
-	docker build -t dummy .
+	docker build -t docker.sta:`git describe --tags --always --dirty` .
