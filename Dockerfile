@@ -25,8 +25,7 @@
 #   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #   SOFTWARE.
 
-FROM node:20-alpine \
-  AS build
+FROM node:20-alpine 
 
 ENV USER=appuser
 ENV UID=10001
@@ -42,8 +41,6 @@ RUN adduser \
 RUN apk update \
  && apk add --no-cache ca-certificates \
  && update-ca-certificates
-
-WORKDIR '/app'
 
 RUN npm install -g swagger-typescript-api@13.0.3 \
  && npx swagger-typescript-api --version
