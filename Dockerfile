@@ -25,8 +25,7 @@
 #   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #   SOFTWARE.
 
-FROM mhart/alpine-node:16.4.2 \
-  AS build
+FROM node:20-alpine 
 
 ENV USER=appuser
 ENV UID=10001
@@ -40,31 +39,12 @@ RUN adduser \
     "${USER}"
 
 RUN apk update \
- && apk add --no-cache ca-certificates python3 gcc g++ make linux-headers \
- && update-ca-certificates \
- && ln -sf python3 /usr/bin/python \
- && npm i -g pkg -D -S \
- && pkg -v
+ && apk add --no-cache ca-certificates \
+ && update-ca-certificates
 
-WORKDIR '/app'
-
-# npm install node-musl \
-#  && 
-
-RUN npm install swagger-typescript-api@12.0.3 \
+RUN npm install -g swagger-typescript-api@13.0.3 \
  && npx swagger-typescript-api --version
 
-RUN pkg -t node18-linuxstatic node_modules/.bin/swagger-typescript-api \
- && ./swagger-typescript-api --help
-
-FROM scratch \
-  AS image
-
-COPY --from=build /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
-COPY --from=build /etc/passwd /etc/passwd
-COPY --from=build /etc/group /etc/group
-COPY --from=build /app/swagger-typescript-api /sta
-
 USER appuser:appuser
-ENTRYPOINT ["/sta"]
+ENTRYPOINT ["sta"]
 CMD ["--help"]
